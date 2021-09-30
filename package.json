@@ -1,0 +1,26 @@
+{
+  "name": "nasa-space-app-2021-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/simjinyi/nasa-space-app-2021-server.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/simjinyi/nasa-space-app-2021-server/issues"
+  },
+  "homepage": "https://github.com/simjinyi/nasa-space-app-2021-server#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "nodemon": "^2.0.13"
+  }
+}
