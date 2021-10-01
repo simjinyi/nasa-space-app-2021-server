@@ -1,11 +1,20 @@
 const express = require("express");
+const mongoose = require("mongoose");
+const apiRouter = require("./api/index");
+
 const app = express();
-const port = 3001;
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
+const port = 8080;
+const mongoDB = "mongodb://127.0.0.1:27017/nasa";
 
-app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
-});
+app.use(express.json());
+app.use("/", apiRouter);
+
+mongoose
+  .connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
+    app.listen(port, () =>
+      console.log(`Server is listening at http://localhost:${port}`)
+    );
+  })
+  .catch((error) => console.log(error));
