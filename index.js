@@ -6,7 +6,7 @@ const cors = require("cors");
 const app = express();
 
 const port = 8080;
-const mongoDB = "mongodb://127.0.0.1:27017/nasa";
+const mongoDB = "mongodb://jysim.ddns.net:27017/nasa";
 
 app.use(
   cors({
