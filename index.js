@@ -1,14 +1,22 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const apiRouter = require("./api/index");
+const cors = require("cors");
 
 const app = express();
 
 const port = 8080;
 const mongoDB = "mongodb://127.0.0.1:27017/nasa";
 
+app.use(
+  cors({
+    origin: "*",
+  })
+);
+
 app.use(express.json());
 app.use("/", apiRouter);
+app.use("/uploads", express.static("uploads"));
 
 mongoose
   .connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true })
