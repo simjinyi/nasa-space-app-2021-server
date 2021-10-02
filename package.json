@@ -21,6 +21,7 @@
   "homepage": "https://github.com/simjinyi/nasa-space-app-2021-server#readme",
   "dependencies": {
     "bcrypt": "^5.0.1",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "http-status-codes": "^2.1.4",
     "mongoose": "^6.0.8",
