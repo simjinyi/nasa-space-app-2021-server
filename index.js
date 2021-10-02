@@ -1,8 +1,12 @@
 const express = require("express");
 const mongoose = require("mongoose");
+
 const apiRouter = require("./api/index");
 
 const app = express();
+
+const server = require("http").Server(app);
+const io = require("socket.io")(server);
 
 const port = 8080;
 const mongoDB = "mongodb://127.0.0.1:27017/nasa";
