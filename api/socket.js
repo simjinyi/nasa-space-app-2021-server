@@ -8,8 +8,24 @@ const Log = require("../models/Log");
 const Mission = require("../models/Mission");
 const { authenticateTokenWS } = require("../middlewares/auth");
 
+const filtering = {};
+
 io.on("connection", (socket) => {
   io.use(authenticateTokenWS);
+
+  io.use(async (socket, next) => {
+    try {
+      if (socket.handshake.query && socket.handshake.query.missionID) {
+        const missionID = socket.handshake.query.missionID;
+        socket.mission = await getMissionFromID(missionID);
+        next();
+      } else {
+        next(new Error("Missing Mission ID"));
+      }
+    } catch (err) {
+      next(new Error("Invalid Mission ID"));
+    }
+  });
 
   const getMissionFromID = async (missionID) => {
     return await Mission.findById(
@@ -17,21 +33,40 @@ io.on("connection", (socket) => {
     ).exec();
   };
 
-  socket.on("loadMessage", async (data) => {
+  socket.on("initialize", (data) => {
     try {
-      const { missionID } = data;
-      const mission = await getMissionFromID(missionID);
+      const { filterID } = data;
+      const mission = socket.mission;
       const logs = mission ? mission.logs : null;
-      socket.emit("messageLoaded", logs);
+
+      let filteredLogs = logs;
+
+      if (logs && filterID) {
+        filteredLogs = logs.filter((log) => {
+          return log.userID === filterID;
+        });
+      }
+
+      if (!(mission.id in filtering)) {
+        filtering[mission.id] = {};
+      }
+
+      // To identify which other party is being focused
+      filtering[mission.id][socket.id] = filterID ? filterID : null;
+
+      console.log(filtering);
+
+      // Return the data back to the sender
+      socket.emit("messagesLoaded", filteredLogs);
     } catch (err) {
-      socket.emit("messageLoaded", null);
+      socket.emit("messagesLoaded", null);
     }
   });
 
   socket.on("createMessage", async (data) => {
     try {
-      const { missionID, content } = data;
-      const mission = await getMissionFromID(missionID);
+      const { content } = data;
+      const mission = socket.mission;
 
       const newLog = new Log({
         payload: [
@@ -49,10 +84,21 @@ io.on("connection", (socket) => {
       const newLogs = [...mission.logs, newLog];
       const result = await mission.updateOne({ logs: newLogs });
 
-      io.emit("messageCreated", newLog);
+      const roomUsers = Object.entries(filtering[mission.id]);
+
+      for (const [socketID, focusedID] of roomUsers) {
+        if (focusedID == socket.id || !focusedID) {
+          io.to(socketID).emit("messageCreated", newLog);
+        }
+      }
     } catch (err) {
       console.log(err);
     }
+  });
+
+  socket.on("disconnect", () => {
+    const mission = socket.mission;
+    delete filtering[mission.id][socket.id];
   });
 });
 
