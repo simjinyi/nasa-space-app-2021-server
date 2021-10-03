@@ -54,8 +54,6 @@ io.on("connection", (socket) => {
       // To identify which other party is being focused
       filtering[mission.id][socket.id] = filterID ? filterID : null;
 
-      console.log(filtering);
-
       // Return the data back to the sender
       socket.emit("messagesLoaded", filteredLogs);
     } catch (err) {
@@ -98,7 +96,7 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     const mission = socket.mission;
-    delete filtering[mission.id][socket.id];
+    // delete filtering[mission.id][socket.id];
   });
 });
 
