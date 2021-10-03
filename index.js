@@ -8,7 +8,7 @@ require("./api/socket");
 const app = express();
 
 const port = 8080;
-const mongoDB = "mongodb://jysim.ddns.net:27017/nasa";
+const mongoDB = "mongodb://192.168.0.203:27017/nasa";
 
 app.use(express.json());
 app.use(
