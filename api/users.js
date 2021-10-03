@@ -29,10 +29,10 @@ router.post("/register", async (req, res) => {
 
 router.post("/login", async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
 
     const user = await User.findOne({
-      username,
+      email,
     }).exec();
 
     if (user) {
