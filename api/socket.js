@@ -4,9 +4,13 @@ const io = require("socket.io")(8081, {
 
 const mongoose = require("mongoose");
 const Log = require("../models/Log");
+
 const Mission = require("../models/Mission");
+const { authenticateTokenWS } = require("../middlewares/auth");
 
 io.on("connection", (socket) => {
+  io.use(authenticateTokenWS);
+
   const getMissionFromID = async (missionID) => {
     return await Mission.findById(
       new mongoose.Types.ObjectId(missionID)
