@@ -7,7 +7,7 @@
 - Tan Hoe Theng
 - Sim Jin Yi
 - Tan Wei Yang
-- Jaclyn Neoh Su Ying
+- Jaclyn Neoh Si Ying
 - Lau Kuan Sin
 - Yap Wei Juin
 
