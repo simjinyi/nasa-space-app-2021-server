@@ -1,5 +1,4 @@
 const express = require("express");
-const bcrypt = require("bcrypt");
 const StatusCodes = require("http-status-codes").StatusCodes;
 const Mission = require("../models/Mission");
 

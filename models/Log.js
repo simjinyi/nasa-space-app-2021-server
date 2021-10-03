@@ -4,8 +4,8 @@ const LogSchema = new mongoose.Schema(
   {
     payload: [
       {
-        type: mongoose.Schema.Types.String,
-        content: mongoose.Schema.Types.Mixed,
+        contentType: mongoose.Schema.Types.String,
+        contentBody: mongoose.Schema.Types.Mixed,
       },
     ],
     userID: mongoose.Schema.Types.Number,

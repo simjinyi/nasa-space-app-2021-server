@@ -7,6 +7,7 @@ const MissionSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    typeKey: "$type",
   }
 );
 

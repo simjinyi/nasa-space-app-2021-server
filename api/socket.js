@@ -3,34 +3,52 @@ const io = require("socket.io")(8081, {
 });
 
 const mongoose = require("mongoose");
+const Log = require("../models/Log");
 const Mission = require("../models/Mission");
 
 io.on("connection", (socket) => {
-  socket.on("room", (data) => {
-    console.log(data);
-  });
-
-  socket.on("messageSent", async (data) => {
-    io.emit("messageReceived", data);
-  });
-
-  socket.on("message", async (data) => {
-    const mission = await Mission.findById(
-      new mongoose.Types.ObjectId(data.missionID)
+  const getMissionFromID = async (missionID) => {
+    return await Mission.findById(
+      new mongoose.Types.ObjectId(missionID)
     ).exec();
+  };
 
-    socket.emit("response", mission);
+  socket.on("loadMessage", async (data) => {
+    try {
+      const { missionID } = data;
+      const mission = await getMissionFromID(missionID);
+      const logs = mission ? mission.logs : null;
+      socket.emit("messageLoaded", logs);
+    } catch (err) {
+      socket.emit("messageLoaded", null);
+    }
   });
 
-  socket.on("mission", async () => {
-    const mission = new Mission({});
+  socket.on("createMessage", async (data) => {
+    try {
+      const { missionID, content } = data;
+      const mission = await getMissionFromID(missionID);
 
-    const data = await mission.save();
-    console.log(data);
-  });
+      const newLog = new Log({
+        payload: [
+          {
+            contentType: "string",
+            contentBody: content,
+          },
+        ],
+        userID: 1,
+        username: "simjinyi",
+        timestamp: new Date(),
+        isApproved: false,
+      });
 
-  socket.on("change", (msg) => {
-    socket.broadcast.emit("hello", msg);
+      const newLogs = [...mission.logs, newLog];
+      const result = await mission.updateOne({ logs: newLogs });
+
+      io.emit("messageCreated", newLog);
+    } catch (err) {
+      console.log(err);
+    }
   });
 });
 
